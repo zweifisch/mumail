@@ -1,0 +1,20 @@
+{
+  "name": "mumail",
+  "version": "0.0.1",
+  "description": "sending mail using sendmail, using mustache for templating",
+  "main": "mumail.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zweifisch/mumail.git"
+  },
+  "author": "zf",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "hogan.js": "~2.0.0",
+    "nodemailer": "~0.3.43"
+  }
+}

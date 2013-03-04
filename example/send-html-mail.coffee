@@ -1,15 +1,5 @@
-# mumail
 
-sending email using sendmail, using mustache for templating
-
-## usage
-
-```sh
-npm install mumail
-```
-
-```coffeescript
-Mumail = require 'mumail'
+Mumail = require '../mumail'
 
 muMail = new Mumail
 	templatePath: './templates/'
@@ -27,13 +17,3 @@ muMail.send
 	template: "welcome"
 	data:
 		username: 'unique-username'
-```
-
-`welcome.html` located in `./templates`
-```html
-<html>
-	<body>
-		welcome {{username}}
-	</body>
-</html>
-```

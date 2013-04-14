@@ -12,7 +12,7 @@ class Mumail extends EventEmitter
 	constructor:({@templatePath,@from})->
 		@transport = nodemailer.createTransport 'sendmail'
 
-	send:({from,to,subject,template,data})->
+	send:({from,to,cc,subject,template,data})->
 
 		from = from ? @from
 		htmlPath = path.join @templatePath,"#{template}.html"
@@ -23,12 +23,18 @@ class Mumail extends EventEmitter
 			to: to
 			subject: subject
 
+		if cc
+			opts.cc = cc
+
 		if htmlPath in cachedTemplates
 			@renderAndSend opts,cachedTemplates[htmlPath],data
 		else
 			fs.readFile htmlPath,'utf-8',(err,html)=>
-				cachedTemplates[htmlPath] = hogan.compile html
-				@renderAndSend opts,cachedTemplates[htmlPath],data
+				if err
+					@emit 'error', err
+				else
+					cachedTemplates[htmlPath] = hogan.compile html
+					@renderAndSend opts,cachedTemplates[htmlPath],data
 
 	renderAndSend:(opts,template,data)->
 

@@ -1,4 +1,3 @@
-
 nodemailer = require 'nodemailer'
 fs = require 'fs'
 path = require 'path'
@@ -15,8 +14,6 @@ class Mumail extends EventEmitter
 	send:({from,to,cc,subject,template,data})->
 
 		from = from ? @from
-		htmlPath = path.join @templatePath,"#{template}.html"
-		textPath = path.join @templatePath,"#{template}.txt"
 
 		opts =
 			from: from
@@ -26,24 +23,33 @@ class Mumail extends EventEmitter
 		if cc
 			opts.cc = cc
 
-		if htmlPath in cachedTemplates
-			@renderAndSend opts,cachedTemplates[htmlPath],data
+		console.log template
+
+		@render template, data, (html)=>
+			@sendMail opts, html
+
+
+	sendMail: (opts, html)->
+		opts.html = html
+		@transport.sendMail opts, (error, response)=>
+			if error
+				@emit 'error', error
+			else
+				@emit 'done', response
+
+	render :(templateName, data, callback)->
+
+		htmlPath = path.join @templatePath,"#{templateName}.html"
+		textPath = path.join @templatePath,"#{templateName}.txt"
+
+		if cachedTemplates[htmlPath]
+			callback cachedTemplates[htmlPath].render data
 		else
-			fs.readFile htmlPath,'utf-8',(err,html)=>
+			fs.readFile htmlPath, 'utf-8', (err, html)=>
 				if err
 					@emit 'error', err
 				else
 					cachedTemplates[htmlPath] = hogan.compile html
-					@renderAndSend opts,cachedTemplates[htmlPath],data
-
-	renderAndSend:(opts,template,data)->
-
-			opts.html = template.render data
-
-			@transport.sendMail opts, (error, response)=>
-				if error
-					@emit 'error', error
-				else
-					@emit 'done', response
+					callback cachedTemplates[htmlPath].render data
 
 module.exports = Mumail

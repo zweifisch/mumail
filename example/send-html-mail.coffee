@@ -1,19 +1,22 @@
 
 Mumail = require '../mumail'
 
-muMail = new Mumail
+mumail = new Mumail
 	templatePath: './templates/'
 	from: 'noreply@localhost'
 
-muMail.on 'done', ->
+mumail.on 'done', ->
 	console.log 'mail sent'
 
-muMail.on 'error', (error)->
+mumail.on 'error', (error)->
 	console.log error
 
-muMail.send
+mumail.send
 	to: "user@somehost.com"
 	subject: "Welcome!"
 	template: "welcome"
 	data:
 		username: 'unique-username'
+
+mumail.render "welcome", username: 'unique-username', (html)->
+	console.log html

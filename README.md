@@ -11,17 +11,17 @@ npm install mumail
 ```coffeescript
 Mumail = require 'mumail'
 
-muMail = new Mumail
+mumail = new Mumail
 	templatePath: './templates/'
 	from: 'noreply@localhost'
 
-muMail.on 'done', ->
+mumail.on 'done', ->
 	console.log 'mail sent'
 
-muMail.on 'error', (error)->
+mumail.on 'error', (error)->
 	console.log error
 
-muMail.send
+mumail.send
 	to: "user@somehost.com"
 	subject: "Welcome!"
 	template: "welcome"
@@ -30,6 +30,7 @@ muMail.send
 ```
 
 `welcome.html` located in `./templates`
+
 ```html
 <html>
 	<body>

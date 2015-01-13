@@ -1,6 +1,6 @@
 # mumail
 
-sending email using sendmail, using mustache for templating
+send mail in mustache
 
 ## usage
 
@@ -12,29 +12,36 @@ npm install mumail
 Mumail = require 'mumail'
 
 mumail = new Mumail
-	templatePath: './templates/'
-	from: 'noreply@localhost'
+    templatePath: './templates/'
+    from: 'noreply@localhost'
+    smtp:
+        host: 'smtp.test.com'
+        port: 465
+        auth:
+            user: "username"
+            pass: "password"
+        secure: yes
 
 mumail.on 'done', ->
-	console.log 'mail sent'
+    console.log 'mail sent'
 
 mumail.on 'error', (error)->
-	console.log error
+    console.log error
 
 mumail.send
-	to: "user@somehost.com"
-	subject: "Welcome!"
-	template: "welcome"
-	data:
-		username: 'unique-username'
+    to: "user@somehost.com"
+    subject: "Welcome!"
+    template: "welcome"
+    data:
+        username: 'unique-username'
 ```
 
 `welcome.html` located in `./templates`
 
 ```html
 <html>
-	<body>
-		welcome {{username}}
-	</body>
+    <body>
+        welcome {{username}}
+    </body>
 </html>
 ```

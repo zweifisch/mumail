@@ -6,50 +6,51 @@ hogan = require 'hogan.js'
 
 class Mumail extends EventEmitter
 
-	cachedTemplates = {}
+    cachedTemplates = {}
 
-	constructor:({@templatePath,@from})->
-		@transport = nodemailer.createTransport 'sendmail'
+    constructor: ({@templatePath, @from, @smtp})->
+        if @smtp
+            @transport = nodemailer.createTransport require('nodemailer-smtp-transport') @smtp
+        else
+            @transport = nodemailer.createTransport()
 
-	send:({from,to,cc,subject,template,data})->
+    send: ({from,to,cc,subject,template,data})->
 
-		from = from ? @from
+        from = from ? @from
 
-		opts =
-			from: from
-			to: to
-			subject: subject
+        opts =
+            from: from
+            to: to
+            subject: subject
 
-		if cc
-			opts.cc = cc
+        if cc
+            opts.cc = cc
 
-		console.log template
-
-		@render template, data, (html)=>
-			@sendMail opts, html
+        @render template, data, (html)=>
+            @sendMail opts, html
 
 
-	sendMail: (opts, html)->
-		opts.html = html
-		@transport.sendMail opts, (error, response)=>
-			if error
-				@emit 'error', error
-			else
-				@emit 'done', response
+    sendMail: (opts, html)->
+        opts.html = html
+        @transport.sendMail opts, (error, response)=>
+            if error
+                @emit 'error', error
+            else
+                @emit 'done', response
 
-	render :(templateName, data, callback)->
+    render: (templateName, data, callback)->
 
-		htmlPath = path.join @templatePath,"#{templateName}.html"
-		textPath = path.join @templatePath,"#{templateName}.txt"
+        htmlPath = path.join @templatePath,"#{templateName}.html"
+        textPath = path.join @templatePath,"#{templateName}.txt"
 
-		if cachedTemplates[htmlPath]
-			callback cachedTemplates[htmlPath].render data
-		else
-			fs.readFile htmlPath, 'utf-8', (err, html)=>
-				if err
-					@emit 'error', err
-				else
-					cachedTemplates[htmlPath] = hogan.compile html
-					callback cachedTemplates[htmlPath].render data
+        if cachedTemplates[htmlPath]
+            callback cachedTemplates[htmlPath].render data
+        else
+            fs.readFile htmlPath, 'utf-8', (err, html)=>
+                if err
+                    @emit 'error', err
+                else
+                    cachedTemplates[htmlPath] = hogan.compile html
+                    callback cachedTemplates[htmlPath].render data
 
 module.exports = Mumail

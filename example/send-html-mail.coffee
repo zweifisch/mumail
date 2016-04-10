@@ -1,22 +1,19 @@
-
-Mumail = require '../mumail'
+Mumail = require '../index'
+path = require 'path'
 
 mumail = new Mumail
-	templatePath: './templates/'
-	from: 'noreply@localhost'
+    templatePath: path.join __dirname, 'templates'
+    from: 'noreply@localhost'
 
-mumail.on 'done', ->
-	console.log 'mail sent'
-
-mumail.on 'error', (error)->
-	console.log error
+console.log "sending email to #{process.argv[2]}"
 
 mumail.send
-	to: "user@somehost.com"
-	subject: "Welcome!"
-	template: "welcome"
-	data:
-		username: 'unique-username'
-
-mumail.render "welcome", username: 'unique-username', (html)->
-	console.log html
+    to: process.argv[2]
+    subject: "Welcome!"
+    template: "welcome"
+    data:
+        username: 'unique-username'
+.then ->
+    console.log 'mail sent'
+.catch (error)->
+    console.log error

@@ -1,5 +1,7 @@
 # mumail
 
+[![NPM Version][npm-image]][npm-url]
+
 send mail in mustache
 
 ## usage
@@ -12,9 +14,9 @@ npm install mumail
 Mumail = require 'mumail'
 
 mumail = new Mumail
-    templatePath: './templates/'
+    templatePath: "#{__dirname}/templates/"
     from: 'noreply@localhost'
-    smtp:
+    transport:
         host: 'smtp.test.com'
         port: 465
         auth:
@@ -22,18 +24,14 @@ mumail = new Mumail
             pass: "password"
         secure: yes
 
-mumail.on 'done', ->
-    console.log 'mail sent'
-
-mumail.on 'error', (error)->
-    console.log error
-
 mumail.send
     to: "user@somehost.com"
     subject: "Welcome!"
     template: "welcome"
     data:
         username: 'unique-username'
+.then ->
+    console.log "sent"
 ```
 
 `welcome.html` located in `./templates`
@@ -45,3 +43,6 @@ mumail.send
     </body>
 </html>
 ```
+
+[npm-image]: https://img.shields.io/npm/v/mumail.svg?style=flat
+[npm-url]: https://npmjs.org/package/mumail
